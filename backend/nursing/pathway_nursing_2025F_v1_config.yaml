@@ -11,8 +11,6 @@ pathwayInfo:
   issuingOrganizationId: org_dallasCollege
   effectiveDate: '2025-08-01'
   expirationDate: null
-  rulesFile: nursing_rules.yaml
-  rulesFileJson: nursing_rules.json
 requirements:
   admissionPathwayCompletion:
     taskName: task_admissionsPathway_completion

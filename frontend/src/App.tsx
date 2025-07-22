@@ -282,7 +282,7 @@ const App: React.FC = () => {
       <AppBar position="static" elevation={1}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            YAML Editor
+            Career Pathway Configuration Editor
             {selectedFile && (
               <>
                 {' - '}

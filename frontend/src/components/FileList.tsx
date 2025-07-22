@@ -140,7 +140,7 @@ const FileList: React.FC<FileListProps> = ({
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
           <Typography variant="h6" component="h2">
-            YAML Files
+            Config Files
           </Typography>
           <Box>
             <Tooltip title="Refresh">
