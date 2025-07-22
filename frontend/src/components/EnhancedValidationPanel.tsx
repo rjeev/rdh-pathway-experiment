@@ -188,7 +188,7 @@ const ValidationPanel: React.FC<ValidationPanelProps> = ({
             <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
               <Typography variant="subtitle2" sx={{ mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <TipIcon color="primary" fontSize="small" />
-                YAML Writing Tips for Non-Technical Users
+                YAML Writing Tips for Users
               </Typography>
               <List dense>
                 <ListItem sx={{ pl: 0 }}>
