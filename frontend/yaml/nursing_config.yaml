@@ -1,0 +1,95 @@
+# Dallas College Nursing Career Pathway Configuration
+# Version: 1.0.0
+# Generated from: nursing_pathway.json
+# Last Updated: 2025-07-21
+
+pathwayInfo:
+  id: pathway_dallasCollege_nursingCareer_2025F
+  version: "1.0.0"
+  name: Dallas College Nursing Career Pathway
+  type: career
+  issuingOrganizationId: org_dallasCollege
+  effectiveDate: "2025-08-01"
+  expirationDate: null
+  rulesFile: nursing_rules.yaml
+  rulesFileJson: nursing_rules.json
+
+requirements:
+  admissionPathwayCompletion:
+    taskName: task_admissionsPathway_completion
+    required: true
+    pathwayId: pathway_dallasCollege_admissions_2025F
+    entities:
+      - pathway
+    fields:
+      - pathway.pathwayCompletionStatus
+
+  adnCoursework:
+    taskName: task_coursework_adnRequiredCourses
+    required: true
+    courseList:
+      - rnsG1413
+      - rnsG1361
+      - rnsG1160
+      - rnsG2213
+      - rnsG1533
+      - rnsG2362
+    entities:
+      - studentacademic
+    fields:
+      - studentacademic.courseCode
+      - studentacademic.completionStatus
+
+  nclexLicensure:
+    taskName: task_certification_nclexPass
+    required: true
+    exam: NCLEX-RN
+    status: Pass
+    entities:
+      - studentcertification
+    fields:
+      - studentcertification.examCode
+      - studentcertification.result
+
+  bsnCompletion:
+    taskName: task_academic_bsnProgramCompletion
+    required: false
+    entities:
+      - studentacademic
+    fields:
+      - studentacademic.degreeType
+
+  msnCompletion:
+    taskName: task_academic_msnProgramCompletion
+    required: false
+    entities:
+      - studentacademic
+    fields:
+      - studentacademic.degreeType
+      - studentacademic.graduateCredits
+
+  clinicalExperience:
+    taskName: task_experience_clinicalPractice
+    required: true
+    minimumYears: 3
+    entities:
+      - studentemployment
+    fields:
+      - studentemployment.employmentType
+      - studentemployment.yearsOfExperience
+
+  facultyApplication:
+    taskName: task_admin_facultyApplication
+    required: true
+    entities:
+      - studentapplication
+    fields:
+      - studentapplication.applicationStatus
+
+  certificateRequest:
+    taskName: task_admin_certificateRequest
+    required: true
+    entities:
+      - studentapplication
+    fields:
+      - studentapplication.graduationApplicationStatus

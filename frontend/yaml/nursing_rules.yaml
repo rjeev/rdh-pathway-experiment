@@ -1,0 +1,407 @@
+# Dallas College Nursing Career Pathway Rules
+# Version: 1.0.0
+# Generated from: nursing_pathway.json
+# Last Updated: 2025-07-21
+
+ruleset: pathway_dallasCollege_nursingCareer_2025F
+version: "1.0.0"
+configFile: nursing_config.yaml
+configFileJson: nursing_config.json
+
+rules:
+  # Admission Pathway Rules
+  - name: rule_admission_pathway_complete
+    conditions:
+      - field: entity
+        operator: "=="
+        value: pathway
+      - field: pathwayCompletionStatus
+        operator: "=="
+        value: completed
+    action:
+      type: assertion
+      data:
+        admissionPathwayCompletion: true
+        taskName: task_admissionsPathway_completion
+        status: completed
+
+  - name: rule_admission_pathway_incomplete
+    conditions:
+      - field: entity
+        operator: "=="
+        value: pathway
+      - field: pathwayCompletionStatus
+        operator: "!="
+        value: completed
+    action:
+      type: assertion
+      data:
+        admissionPathwayCompletion: false
+        taskName: task_admissionsPathway_completion
+        status: at_risk
+
+  # ADN Coursework Rules
+  - name: rule_adn_coursework_complete
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentacademic
+      - field: courseCode
+        operator: in
+        value:
+          - rnsG1413
+          - rnsG1361
+          - rnsG1160
+          - rnsG2213
+          - rnsG1533
+          - rnsG2362
+      - field: completionStatus
+        operator: "=="
+        value: completed
+    action:
+      type: assertion
+      data:
+        adnCoursework: true
+        taskName: task_coursework_adnRequiredCourses
+        status: completed
+        courseCode: "${courseCode}"
+
+  - name: rule_adn_coursework_incomplete
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentacademic
+      - field: courseCode
+        operator: in
+        value:
+          - rnsG1413
+          - rnsG1361
+          - rnsG1160
+          - rnsG2213
+          - rnsG1533
+          - rnsG2362
+      - field: completionStatus
+        operator: "!="
+        value: completed
+    action:
+      type: assertion
+      data:
+        adnCoursework: false
+        taskName: task_coursework_adnRequiredCourses
+        status: at_risk
+        courseCode: "${courseCode}"
+        completionStatus: "${completionStatus}"
+
+  # NCLEX Rules
+  - name: rule_nclex_pass
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentcertification
+      - field: examCode
+        operator: "=="
+        value: NCLEX-RN
+      - field: result
+        operator: "=="
+        value: Pass
+    action:
+      type: assertion
+      data:
+        nclexLicensure: true
+        taskName: task_certification_nclexPass
+        status: completed
+        examCode: NCLEX-RN
+
+  - name: rule_nclex_fail
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentcertification
+      - field: examCode
+        operator: "=="
+        value: NCLEX-RN
+      - field: result
+        operator: "!="
+        value: Pass
+    action:
+      type: assertion
+      data:
+        nclexLicensure: false
+        taskName: task_certification_nclexPass
+        status: at_risk
+        examCode: NCLEX-RN
+        result: "${result}"
+
+  # BSN Completion Rule
+  - name: rule_bsn_completion
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentacademic
+      - field: degreeType
+        operator: "=="
+        value: BSN
+    action:
+      type: assertion
+      data:
+        bsnCompletion: true
+        taskName: task_academic_bsnProgramCompletion
+        status: completed
+        degreeType: BSN
+
+  # MSN Completion Rule
+  - name: rule_msn_completion
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentacademic
+      - field: degreeType
+        operator: "=="
+        value: MSN
+    action:
+      type: assertion
+      data:
+        msnCompletion: true
+        taskName: task_academic_msnProgramCompletion
+        status: completed
+        degreeType: MSN
+        graduateCredits: "${graduateCredits}"
+
+  # Clinical Experience Rules
+  - name: rule_clinical_experience_sufficient
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentemployment
+      - field: employmentType
+        operator: "=="
+        value: clinical
+      - field: yearsOfExperience
+        operator: ">="
+        value: 3
+    action:
+      type: assertion
+      data:
+        clinicalExperience: true
+        taskName: task_experience_clinicalPractice
+        status: completed
+        yearsOfExperience: "${yearsOfExperience}"
+
+  - name: rule_clinical_experience_insufficient
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentemployment
+      - field: employmentType
+        operator: "=="
+        value: clinical
+      - field: yearsOfExperience
+        operator: "<"
+        value: 3
+    action:
+      type: assertion
+      data:
+        clinicalExperience: false
+        taskName: task_experience_clinicalPractice
+        status: at_risk
+        yearsOfExperience: "${yearsOfExperience}"
+
+  # Faculty Application Rules
+  - name: rule_faculty_application_submitted
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentapplication
+      - field: applicationStatus
+        operator: in
+        value:
+          - submitted
+          - under_review
+          - approved
+    action:
+      type: assertion
+      data:
+        facultyApplication: true
+        taskName: task_admin_facultyApplication
+        status: completed
+        applicationStatus: "${applicationStatus}"
+
+  - name: rule_faculty_application_not_submitted
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentapplication
+      - field: applicationStatus
+        operator: not_in
+        value:
+          - submitted
+          - under_review
+          - approved
+    action:
+      type: assertion
+      data:
+        facultyApplication: false
+        taskName: task_admin_facultyApplication
+        status: at_risk
+        applicationStatus: "${applicationStatus}"
+
+  # Certificate Request Rules
+  - name: rule_certificate_request_submitted
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentapplication
+      - field: graduationApplicationStatus
+        operator: in
+        value:
+          - submitted
+          - approved
+          - processed
+    action:
+      type: assertion
+      data:
+        certificateRequest: true
+        taskName: task_admin_certificateRequest
+        status: completed
+        graduationApplicationStatus: "${graduationApplicationStatus}"
+
+  - name: rule_certificate_request_not_submitted
+    conditions:
+      - field: entity
+        operator: "=="
+        value: studentapplication
+      - field: graduationApplicationStatus
+        operator: not_in
+        value:
+          - submitted
+          - approved
+          - processed
+    action:
+      type: assertion
+      data:
+        certificateRequest: false
+        taskName: task_admin_certificateRequest
+        status: at_risk
+        graduationApplicationStatus: "${graduationApplicationStatus}"
+
+  # Guidance Rules
+  - name: guidance_missing_nclex
+    conditions:
+      - field: adnCoursework
+        operator: "=="
+        value: true
+      - field: nclexLicensure
+        operator: "=="
+        value: false
+    action:
+      type: guidance
+      data:
+        guidanceId: guidance_missing_nclex
+        recommendation: Register and pass the NCLEX-RN to become a licensed nurse.
+        priority: high
+        notificationType: email
+        status: pending_action
+        channel: email
+        subject: NCLEX Licensure Needed
+        message: You've completed your ADN coursework. Please take the NCLEX-RN exam to obtain your nursing license.
+
+  - name: guidance_optional_bsn_msn
+    conditions:
+      - field: nclexLicensure
+        operator: "=="
+        value: true
+      - field: bsnCompletion
+        operator: "=="
+        value: false
+      - field: msnCompletion
+        operator: "=="
+        value: false
+    action:
+      type: guidance
+      data:
+        guidanceId: guidance_optional_bsn_msn
+        recommendation: Consider completing BSN or MSN to open advanced career paths.
+        priority: low
+        notificationType: email
+        status: optional
+        channel: email
+        subject: "Optional: Advance Your Nursing Career"
+        message: To pursue advanced clinical or teaching roles, you can consider completing your BSN or MSN.
+
+  - name: guidance_insufficient_experience
+    conditions:
+      - field: msnCompletion
+        operator: "=="
+        value: true
+      - field: clinicalExperience
+        operator: "=="
+        value: false
+    action:
+      type: guidance
+      data:
+        guidanceId: guidance_insufficient_experience
+        recommendation: Continue working as a registered nurse until you reach 3 years of experience.
+        priority: medium
+        notificationType: email
+        status: pending_action
+        channel: email
+        subject: Clinical Experience Milestone
+        message: Keep going! You're progressing well. Gain at least 3 years of RN clinical experience for faculty eligibility.
+
+  - name: guidance_ready_for_faculty_application
+    conditions:
+      - field: adnCoursework
+        operator: "=="
+        value: true
+      - field: nclexLicensure
+        operator: "=="
+        value: true
+      - field: clinicalExperience
+        operator: "=="
+        value: true
+      - field: certificateRequest
+        operator: "=="
+        value: false
+    action:
+      type: guidance
+      data:
+        guidanceId: guidance_ready_for_faculty_application
+        recommendation: You're ready to request your certificate and apply for faculty roles.
+        priority: high
+        notificationType: email
+        status: eligible_for_application
+        channel: email
+        subject: You're Ready to Apply for Faculty Roles
+        message: Congratulations! You're eligible to request your certificate and apply for faculty positions.
+
+  - name: guidance_pathway_complete
+    conditions:
+      - field: admissionPathwayCompletion
+        operator: "=="
+        value: true
+      - field: adnCoursework
+        operator: "=="
+        value: true
+      - field: nclexLicensure
+        operator: "=="
+        value: true
+      - field: clinicalExperience
+        operator: "=="
+        value: true
+      - field: facultyApplication
+        operator: "=="
+        value: true
+      - field: certificateRequest
+        operator: "=="
+        value: true
+    action:
+      type: guidance
+      data:
+        guidanceId: guidance_pathway_complete
+        recommendation: Congratulations! You have completed the nursing career pathway and are eligible for faculty positions.
+        priority: low
+        notificationType: email
+        status: pathway_completed
+        channel: email
+        subject: Nursing Career Pathway Complete!
+        message: Congratulations! You have successfully completed all requirements for the Dallas College Nursing Career Pathway. You are now eligible for faculty positions.

@@ -1,0 +1,32 @@
+{
+  "name": "yaml-editor",
+  "version": "1.0.0",
+  "description": "Full-stack YAML editor for nursing pathway configurations",
+  "scripts": {
+    "start": "./start.sh",
+    "test": "./test-setup.sh",
+    "install:backend": "cd backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend",
+    "dev:backend": "cd backend && source venv/bin/activate && uvicorn main:app --reload",
+    "dev:frontend": "cd frontend && npm start",
+    "build:frontend": "cd frontend && npm run build",
+    "clean": "rm -rf backend/venv frontend/node_modules frontend/build"
+  },
+  "keywords": [
+    "yaml",
+    "editor",
+    "validation",
+    "nursing",
+    "pathway",
+    "fastapi",
+    "react",
+    "typescript"
+  ],
+  "author": "YAML Editor Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "python": ">=3.8.0"
+  }
+}
