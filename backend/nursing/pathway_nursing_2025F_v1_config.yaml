@@ -5,15 +5,14 @@
 
 pathwayInfo:
   id: pathway_dallasCollege_nursingCareer_2025F
-  version: "1.0.0"
+  version: 1.0.1
   name: Dallas College Nursing Career Pathway
   type: career
   issuingOrganizationId: org_dallasCollege
-  effectiveDate: "2025-08-01"
+  effectiveDate: '2025-08-01'
   expirationDate: null
   rulesFile: nursing_rules.yaml
   rulesFileJson: nursing_rules.json
-
 requirements:
   admissionPathwayCompletion:
     taskName: task_admissionsPathway_completion
@@ -23,7 +22,6 @@ requirements:
       - pathway
     fields:
       - pathway.pathwayCompletionStatus
-
   adnCoursework:
     taskName: task_coursework_adnRequiredCourses
     required: true
@@ -39,7 +37,6 @@ requirements:
     fields:
       - studentacademic.courseCode
       - studentacademic.completionStatus
-
   nclexLicensure:
     taskName: task_certification_nclexPass
     required: true
@@ -50,7 +47,6 @@ requirements:
     fields:
       - studentcertification.examCode
       - studentcertification.result
-
   bsnCompletion:
     taskName: task_academic_bsnProgramCompletion
     required: false
@@ -58,7 +54,6 @@ requirements:
       - studentacademic
     fields:
       - studentacademic.degreeType
-
   msnCompletion:
     taskName: task_academic_msnProgramCompletion
     required: false
@@ -67,7 +62,6 @@ requirements:
     fields:
       - studentacademic.degreeType
       - studentacademic.graduateCredits
-
   clinicalExperience:
     taskName: task_experience_clinicalPractice
     required: true
@@ -77,7 +71,6 @@ requirements:
     fields:
       - studentemployment.employmentType
       - studentemployment.yearsOfExperience
-
   facultyApplication:
     taskName: task_admin_facultyApplication
     required: true
@@ -85,7 +78,6 @@ requirements:
       - studentapplication
     fields:
       - studentapplication.applicationStatus
-
   certificateRequest:
     taskName: task_admin_certificateRequest
     required: true
@@ -93,3 +85,9 @@ requirements:
       - studentapplication
     fields:
       - studentapplication.graduationApplicationStatus
+  TestRequest:
+    taskName: test
+    required: true
+    description: test
+    entities: []
+    fields: []

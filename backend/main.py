@@ -39,27 +39,31 @@ class YAMLValidationResponse(BaseModel):
 class FileListResponse(BaseModel):
     files: List[Dict[str, Any]]
 
+import pathlib
 # Configuration
-YAML_FILES_DIR = "yaml"  # Parent directory containing YAML files
+BACKEND_DIR = pathlib.Path(__file__).parent.resolve()
+YAML_FILES_DIR = str(BACKEND_DIR / "nursing")  # Absolute path to nursing folder
 ALLOWED_EXTENSIONS = {".yaml", ".yml"}
 
 def get_yaml_files():
-    """Get list of YAML files in the directory"""
+    """Get list of YAML files in the nursing directory (and subfolders if needed)"""
     files = []
     try:
-        for filename in os.listdir(YAML_FILES_DIR):
-            if any(filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
-                filepath = os.path.join(YAML_FILES_DIR, filename)
-                try:
-                    stats = os.stat(filepath)
-                    files.append({
-                        "name": filename,
-                        "size": stats.st_size,
-                        "modified": datetime.fromtimestamp(stats.st_mtime).isoformat(),
-                        "path": filepath
-                    })
-                except OSError:
-                    continue
+        for root, dirs, filenames in os.walk(YAML_FILES_DIR):
+            for filename in filenames:
+                if any(filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
+                    filepath = os.path.join(root, filename)
+                    relpath = os.path.relpath(filepath, start=YAML_FILES_DIR)
+                    try:
+                        stats = os.stat(filepath)
+                        files.append({
+                            "name": filename,
+                            "size": stats.st_size,
+                            "modified": datetime.fromtimestamp(stats.st_mtime).isoformat(),
+                            "path": os.path.join('nursing', relpath).replace('\\', '/')
+                        })
+                    except OSError:
+                        continue
     except OSError:
         pass
     return sorted(files, key=lambda x: x["name"])
@@ -84,7 +88,13 @@ async def get_file(filename: str):
     if not any(filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file extension")
     
+    # Support subfolders: filename may be nursing/...
     filepath = os.path.join(YAML_FILES_DIR, filename)
+    if not os.path.exists(filepath):
+        # Try relative to backend root (for legacy or direct path)
+        filepath = os.path.join(os.path.dirname(__file__), filename)
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail="File not found")
     
     if not os.path.exists(filepath):
         raise HTTPException(status_code=404, detail="File not found")
@@ -193,7 +203,14 @@ async def save_file(request: YAMLSaveRequest):
     if not any(request.filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file extension")
     
+    # Support subfolders: filename may be nursing/...
     filepath = os.path.join(YAML_FILES_DIR, request.filename)
+    if not os.path.exists(filepath):
+        # Try relative to backend root (for legacy or direct path)
+        filepath = os.path.join(os.path.dirname(__file__), request.filename)
+    if not os.path.exists(filepath):
+        # If saving, just use the default path
+        filepath = os.path.join(YAML_FILES_DIR, request.filename)
     
     try:
         # Validate YAML before saving
@@ -227,7 +244,13 @@ async def convert_to_json(filename: str):
     if not any(filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file extension")
     
+    # Support subfolders: filename may be nursing/...
     yaml_path = os.path.join(YAML_FILES_DIR, filename)
+    if not os.path.exists(yaml_path):
+        # Try relative to backend root (for legacy or direct path)
+        yaml_path = os.path.join(os.path.dirname(__file__), filename)
+    if not os.path.exists(yaml_path):
+        raise HTTPException(status_code=404, detail="File not found")
     json_filename = filename.replace('.yaml', '.json').replace('.yml', '.json')
     json_path = os.path.join(YAML_FILES_DIR, json_filename)
     
@@ -271,6 +294,7 @@ async def upload_file(file: UploadFile = File(...)):
     if not any(file.filename.endswith(ext) for ext in ALLOWED_EXTENSIONS):
         raise HTTPException(status_code=400, detail="Invalid file extension. Only .yaml and .yml files are allowed.")
     
+    # Support subfolders: filename may be nursing/...
     filepath = os.path.join(YAML_FILES_DIR, file.filename)
     
     try:

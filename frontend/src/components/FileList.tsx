@@ -49,6 +49,16 @@ const FileList: React.FC<FileListProps> = ({
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
+  // Group files by folder (simulate folder structure)
+  const folderMap: { [folder: string]: YAMLFile[] } = {};
+  files.forEach((file) => {
+    // Use the first part of the path as the folder name (e.g., 'nursing/pathway.yaml' -> 'nursing')
+    const parts = file.path.split('/');
+    const folder = parts.length > 1 ? parts[0] : 'other';
+    if (!folderMap[folder]) folderMap[folder] = [];
+    folderMap[folder].push(file);
+  });
+
   useEffect(() => {
     // Create hidden file input for upload
     const input = document.createElement('input');
@@ -179,50 +189,112 @@ const FileList: React.FC<FileListProps> = ({
             </Typography>
           </Box>
         ) : (
-          <List dense>
-            {files.map((file, index) => (
-              <React.Fragment key={file.name}>
-                <ListItem disablePadding>
-                  <ListItemButton
-                    selected={selectedFile === file.name}
-                    onClick={() => onFileSelect(file.name)}
-                    sx={{
-                      py: 1,
-                      '&.Mui-selected': {
-                        backgroundColor: 'primary.light',
-                        color: 'primary.contrastText',
-                        '&:hover': {
-                          backgroundColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 40 }}>
-                      <FileIcon color={selectedFile === file.name ? 'inherit' : 'primary'} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={file.name}
-                      secondary={
-                        <Box>
-                          <Typography variant="caption" display="block">
-                            {formatFileSize(file.size)}
-                          </Typography>
-                          <Typography variant="caption" display="block" color="text.secondary">
-                            {formatDate(file.modified)}
-                          </Typography>
-                        </Box>
-                      }
-                      primaryTypographyProps={{
-                        variant: 'body2',
-                        fontWeight: selectedFile === file.name ? 'bold' : 'normal',
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-                {index < files.length - 1 && <Divider />}
-              </React.Fragment>
-            ))}
-          </List>
+          <>
+            {/* Nursing folder */}
+            {folderMap['nursing'] && (
+              <>
+                <Typography variant="subtitle2" sx={{ pl: 2, pt: 1, pb: 0.5, color: 'primary.main' }}>
+                  nursing
+                </Typography>
+                <List dense sx={{ pl: 2 }}>
+                  {folderMap['nursing'].map((file, index) => (
+                    <React.Fragment key={file.name}>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          selected={selectedFile === file.name}
+                          onClick={() => onFileSelect(file.name)}
+                          sx={{
+                            py: 1,
+                            '&.Mui-selected': {
+                              backgroundColor: 'primary.light',
+                              color: 'primary.contrastText',
+                              '&:hover': {
+                                backgroundColor: 'primary.main',
+                              },
+                            },
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 40 }}>
+                            <FileIcon color={selectedFile === file.name ? 'inherit' : 'primary'} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={file.name}
+                            secondary={
+                              <Box>
+                                <Typography variant="caption" display="block">
+                                  {formatFileSize(file.size)}
+                                </Typography>
+                                <Typography variant="caption" display="block" color="text.secondary">
+                                  {formatDate(file.modified)}
+                                </Typography>
+                              </Box>
+                            }
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              fontWeight: selectedFile === file.name ? 'bold' : 'normal',
+                            }}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                      {index < folderMap['nursing'].length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </List>
+              </>
+            )}
+            {/* Other files (if any) */}
+            {folderMap['other'] && folderMap['other'].length > 0 && (
+              <>
+                <Typography variant="subtitle2" sx={{ pl: 2, pt: 2, pb: 0.5, color: 'text.secondary' }}>
+                  other
+                </Typography>
+                <List dense sx={{ pl: 2 }}>
+                  {folderMap['other'].map((file, index) => (
+                    <React.Fragment key={file.name}>
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          selected={selectedFile === file.name}
+                          onClick={() => onFileSelect(file.name)}
+                          sx={{
+                            py: 1,
+                            '&.Mui-selected': {
+                              backgroundColor: 'primary.light',
+                              color: 'primary.contrastText',
+                              '&:hover': {
+                                backgroundColor: 'primary.main',
+                              },
+                            },
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 40 }}>
+                            <FileIcon color={selectedFile === file.name ? 'inherit' : 'primary'} />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={file.name}
+                            secondary={
+                              <Box>
+                                <Typography variant="caption" display="block">
+                                  {formatFileSize(file.size)}
+                                </Typography>
+                                <Typography variant="caption" display="block" color="text.secondary">
+                                  {formatDate(file.modified)}
+                                </Typography>
+                              </Box>
+                            }
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              fontWeight: selectedFile === file.name ? 'bold' : 'normal',
+                            }}
+                          />
+                        </ListItemButton>
+                      </ListItem>
+                      {index < folderMap['other'].length - 1 && <Divider />}
+                    </React.Fragment>
+                  ))}
+                </List>
+              </>
+            )}
+          </>
         )}
       </Box>
 

@@ -5,8 +5,6 @@
 
 ruleset: pathway_dallasCollege_nursingCareer_2025F
 version: "1.0.0"
-configFile: nursing_config.yaml
-configFileJson: nursing_config.json
 
 rules:
   # Admission Pathway Rules

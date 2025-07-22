@@ -2,7 +2,7 @@ export interface YAMLFile {
   name: string;
   size: number;
   modified: string;
-  path: string;
+  path: string; // full or relative path, used for folder grouping
 }
 
 export interface FileContent {
